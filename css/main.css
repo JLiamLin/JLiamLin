@@ -277,7 +277,7 @@ p {
   margin: 0 0 20px 0;
 }
 a {
-  color: #555;
+  color: #2e7ac4;
   text-decoration: none;
   outline: none;
   border-bottom: 1px solid #999;
@@ -1946,7 +1946,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #873dff;
+  background: #ff2004;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2921,6 +2921,7 @@ pre .javascript .function {
   margin: 0;
 }
 .menu .menu-item a {
+  color: #555;
   position: relative;
   box-sizing: border-box;
   padding: 5px 20px;
