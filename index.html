@@ -347,7 +347,80 @@
           
           前言公司近期需要将多个地区的客户信息导入到系统后台，这些信息是存储在 Excel 表格里面的。以前貌似在哪见过 PHPExcel 的使用，所以第一时间上 Github 搜索一下。不过该类库最新的一个版本是15年发布的 1.8.1 版本并且不在进行维护了，该项目已经迁移为 PhpSpreadsheet 了。不过杯具的是，该类库需要 PHP 5.6 版本或以上的支持，公司项目的环境不支持，就只能用回 PHPExcel 了。接下来就是使用 PHPExcel 类库将这些信息从 Excel 表导入 Mysql 数据库中的教程，自己能力有限，该博文也只是做个总结，如有错误，望请各位大神斧正。
 正文什么是 PHPExcel
-PHPExcel 是用来操作Office Excel 文档的一个PHP类库，它基于微软的OpenXML标准和PHP语言。可以使用它来读取、写入不同格式的电子表格，如 Excel (B
+PHPExcel 是用来操作Office Excel 文档的一个PHP类库，它基于微软的OpenXML标准和PHP语言。可以使用它来读取、写入不同格式的电子表格，如 Excel (BIFF) .xls, Excel 2007 (OfficeOpenXML) .xlsx, CSV, Libre/OpenOffice Calc .ods, Gnumeric, PDF, HTML等等。
+
+PHPExcel 使用示例首先创建一个示例用的 Excel 文件 demo.xlsx 如下：
+
+
+
+排名
+编程语言
+流行度
+对比上月
+年度明星语言
+
+
+
+
+1
+Java
+14.99%
+上升0.773%
+2015, 2005
+
+
+2
+C
+11.86%
+上升0.82%
+2017, 2008
+
+
+3
+C++
+5.73%
+上升0.123%
+2003
+
+
+4
+Python
+5.17%
+上升0.49%
+2010, 2007
+
+
+5
+C#
+4.45%
+上升0.699%
+
+
+
+6
+Visual Basic .NET
+4.07%
+上升0.811%
+
+
+
+7
+PHP
+3.42%
+上升0.888%
+2004
+
+
+8
+JavaScript
+3.17%
+下降0.3%
+2014
+
+
+
+网上下载  PHPExcel 放到项目文件夹里，然后就可以开始使用来读取 Excel 文件了。代码如下：
+readExcel.php1234567891011121314151617181920212223242526272829303132333435363738394041424344require_once './PHPExcel/PHPExcel/IOFactory.php';    // 引入类文件/** * 读取excel表格信息并写入数据库 * @param   $filePath   string   excel表格路径 * @return  $result     bool     对表格数据操作的结果 */function readExcel($filePath) &#123;    try &#12
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -499,7 +572,25 @@ PHPExcel 是用来操作Office Excel 文档的一个PHP类库，它基于微软�
 准备工作安装 truffleSolidity 是开发 Ethereum 智能合约的语言，其语法与 JavaScript 相似。Solidity 是静态类型的，支持继承，库以及复杂的用户定义类型。其编译后就是节点运行的 EVM（Ethereum Virtual Machine）程序集。
 Truffle 是当前最活跃的 Ethereum 开发框架，具有调试、部署和测试智能合约等功能。此次建立加密代币的教程就是基于 Truffle 框架的开发，首先开发机上要先安装好 Node.js ，默认带有 npm 软件包管理系统。
 打开命令行工具安装 Truffle：
-1$ npm install -g 
+1$ npm install -g truffle
+本博文使用的 Truffle 版本：
+123$ truffle versionTruffle v4.0.6 (core: 4.0.6)Solidity v0.4.19 (solc-js)
+安装 ganache在开发阶段需要测试，ganache 可以模拟智能合约所需要的以太坊区块链测试环境。
+用官方的语言描述：
+
+Quickly fire up a personal Ethereum blockchain which you can use to run tests, execute commands, and inspect state while controlling how the chain operates.
+
+ganache 有桌面客户端以及命令行工具，本篇教程使用的是命令行工具搭配 Chrome 的 MetaMask 来进行测试。
+通过 npm 来安装 Ganache ：
+1$ npm install -g ganache-cli
+初始化项目为了将精力集中在智能合约的开发上，Truffle 提供了 truffle unbox 命令来初始化一些 demo 所需要的其它代码以及资源文件。
+首先创建项目的工作空间，打开 Truffle 提供的 tutorialtoken 箱：
+123$ mkdir coin-workspace$ cd coin-workspace$ truffle unbox tutorialtoken
+认识 OpenZeppelin建立的代币若要能通过以太币钱包收发，必须支持 ERC-20 标准。本教程使用 OpenZeppelin 库来简化建立加密代币的过程。
+什么是 OpenZeppelin
+OpenZeppelin是一套協助撰寫安全的加密合約的函式庫，裡面也提供了相容ERC20標準的智能合約。
+
+安装 OpenZeppeli
           ...
           <!--noindex-->
           <div class="post-button text-center">
