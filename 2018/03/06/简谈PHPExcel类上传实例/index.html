@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="PHPExcel,PHP,Excel上传," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言公司近期需要将多个地区的客户信息导入到系统后台，这些信息是存储在 Excel 表格里面的。以前貌似在哪见过 PHPExcel 的使用，所以第一时间上 Github 搜索一下。不过该类库最新的一个版本是15年发布的 1.8.1 版本并且不在进行维护了，该项目已经迁移为 PhpSpreadsheet 了。不过杯具的是，该类库需要 PHP 5.6 版本或以上的支持，公司项目的环境不支持，就只能用回">
+<meta name="keywords" content="PHPExcel,PHP,Excel上传">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简述PHPExcel类上传实例">
+<meta property="og:url" content="http://n4sb.me/2018/03/06/简谈PHPExcel类上传实例/index.html">
+<meta property="og:site_name" content="阿边个">
+<meta property="og:description" content="前言公司近期需要将多个地区的客户信息导入到系统后台，这些信息是存储在 Excel 表格里面的。以前貌似在哪见过 PHPExcel 的使用，所以第一时间上 Github 搜索一下。不过该类库最新的一个版本是15年发布的 1.8.1 版本并且不在进行维护了，该项目已经迁移为 PhpSpreadsheet 了。不过杯具的是，该类库需要 PHP 5.6 版本或以上的支持，公司项目的环境不支持，就只能用回">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://res.cloudinary.com/n4sb/image/upload/v1519867310/20180301085625.png">
+<meta property="og:updated_time" content="2018-03-05T16:12:25.802Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="简述PHPExcel类上传实例">
+<meta name="twitter:description" content="前言公司近期需要将多个地区的客户信息导入到系统后台，这些信息是存储在 Excel 表格里面的。以前貌似在哪见过 PHPExcel 的使用，所以第一时间上 Github 搜索一下。不过该类库最新的一个版本是15年发布的 1.8.1 版本并且不在进行维护了，该项目已经迁移为 PhpSpreadsheet 了。不过杯具的是，该类库需要 PHP 5.6 版本或以上的支持，公司项目的环境不支持，就只能用回">
+<meta name="twitter:image" content="http://res.cloudinary.com/n4sb/image/upload/v1519867310/20180301085625.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://n4sb.me/2018/03/06/简谈PHPExcel类上传实例/"/>
+
+
+
+
+
+  <title>简述PHPExcel类上传实例 | 阿边个</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿边个</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">为你，千千万万遍</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://n4sb.me/2018/03/06/简谈PHPExcel类上传实例/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Liam Lin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿边个">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">简述PHPExcel类上传实例</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-06T00:05:08+08:00">
+                2018-03-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/PHP/" itemprop="url" rel="index">
+                    <span itemprop="name">PHP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>公司近期需要将多个地区的客户信息导入到系统后台，这些信息是存储在 Excel 表格里面的。以前貌似在哪见过 <a href="https://github.com/PHPOffice/PHPExcel" target="_blank" rel="noopener">PHPExcel</a> 的使用，所以第一时间上 Github 搜索一下。不过该类库最新的一个版本是15年发布的 1.8.1 版本并且不在进行维护了，该项目已经迁移为 <a href="https://github.com/PHPOffice/PhpSpreadsheet" target="_blank" rel="noopener">PhpSpreadsheet</a> 了。不过杯具的是，该类库需要 PHP 5.6 版本或以上的支持，公司项目的环境不支持，就只能用回 PHPExcel 了。接下来就是使用 PHPExcel 类库将这些信息从 Excel 表导入 Mysql 数据库中的教程，自己能力有限，该博文也只是做个总结，如有错误，望请各位大神斧正。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><h4 id="什么是-PHPExcel"><a href="#什么是-PHPExcel" class="headerlink" title="什么是 PHPExcel"></a>什么是 <a href="https://github.com/PHPOffice/PHPExcel" target="_blank" rel="noopener">PHPExcel</a></h4><blockquote>
+<p><strong>PHPExcel</strong> 是用来操作Office Excel 文档的一个<a href="https://baike.baidu.com/item/PHP/9337" target="_blank" rel="noopener">PHP</a>类库，它基于微软的<a href="https://baike.baidu.com/item/OpenXML/8399547" target="_blank" rel="noopener">OpenXML</a>标准和<a href="https://baike.baidu.com/item/PHP%E8%AF%AD%E8%A8%80" target="_blank" rel="noopener">PHP语言</a>。可以使用它来读取、写入不同格式的<a href="https://baike.baidu.com/item/%E7%94%B5%E5%AD%90%E8%A1%A8%E6%A0%BC" target="_blank" rel="noopener">电子表格</a>，如 Excel (BIFF) .<a href="https://baike.baidu.com/item/xls/2152518" target="_blank" rel="noopener">xls</a>, Excel 2007 (OfficeOpenXML) .<a href="https://baike.baidu.com/item/xlsx/3044321" target="_blank" rel="noopener">xlsx</a>, CSV, Libre/OpenOffice Calc .ods, Gnumeric, PDF, HTML等等。</p>
+</blockquote>
+<h4 id="PHPExcel-使用示例"><a href="#PHPExcel-使用示例" class="headerlink" title="PHPExcel 使用示例"></a><a href="https://github.com/PHPOffice/PHPExcel" target="_blank" rel="noopener">PHPExcel</a> 使用示例</h4><p>首先创建一个示例用的 Excel 文件 demo.xlsx 如下：</p>
+<table>
+<thead>
+<tr>
+<th>排名</th>
+<th>编程语言</th>
+<th>流行度</th>
+<th>对比上月</th>
+<th>年度明星语言</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Java</td>
+<td>14.99%</td>
+<td>上升0.773%</td>
+<td>2015, 2005</td>
+</tr>
+<tr>
+<td>2</td>
+<td>C</td>
+<td>11.86%</td>
+<td>上升0.82%</td>
+<td>2017, 2008</td>
+</tr>
+<tr>
+<td>3</td>
+<td>C++</td>
+<td>5.73%</td>
+<td>上升0.123%</td>
+<td>2003</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Python</td>
+<td>5.17%</td>
+<td>上升0.49%</td>
+<td>2010, 2007</td>
+</tr>
+<tr>
+<td>5</td>
+<td>C#</td>
+<td>4.45%</td>
+<td>上升0.699%</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Visual Basic .NET</td>
+<td>4.07%</td>
+<td>上升0.811%</td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>PHP</td>
+<td>3.42%</td>
+<td>上升0.888%</td>
+<td>2004</td>
+</tr>
+<tr>
+<td>8</td>
+<td>JavaScript</td>
+<td>3.17%</td>
+<td>下降0.3%</td>
+<td>2014</td>
+</tr>
+</tbody>
+</table>
+<p>网上下载  <strong>PHPExcel</strong> 放到项目文件夹里，然后就可以开始使用来读取 Excel 文件了。代码如下：</p>
+<figure class="highlight php"><figcaption><span>readExcel.php</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require_once</span> <span class="string">'./PHPExcel/PHPExcel/IOFactory.php'</span>;    <span class="comment">// 引入类文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 读取excel表格信息并写入数据库</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>   $filePath   string   excel表格路径</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>  $result     bool     对表格数据操作的结果</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">readExcel</span><span class="params">($filePath)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        $fileType = PHPExcel_IOFactory::identify($filePath);    <span class="comment">// 获取excel表格类型</span></span><br><span class="line">        $objReader = PHPExcel_IOFactory::createReader($fileType);    <span class="comment">// 创建实例</span></span><br><span class="line">		$objPHPExcel = $objReader-&gt;load($filePath);    <span class="comment">// 读取excel表格</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="keyword">Exception</span> $e) &#123;</span><br><span class="line">        <span class="comment">// 读取excel表格错误，做相应的错误记录</span></span><br><span class="line">        <span class="comment">// todo something</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    $workSheetsNum = count($objPHPExcel-&gt;getAllSheets());    <span class="comment">// 获取表格的sheet的数量</span></span><br><span class="line">    <span class="keyword">if</span>(!$workSheetsNum) &#123;</span><br><span class="line">        <span class="comment">// 工作区无sheet （其实此步可以省略，excel文件已经限定至少要有一个 sheet）</span></span><br><span class="line">        <span class="comment">// todo something</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; $workSheetsNum; $i++) &#123;    <span class="comment">// 循环sheets分别获取每一张sheet的数据</span></span><br><span class="line">        $sheet = $objPHPExcel-&gt;getSheet($i);</span><br><span class="line">		$highestRows = $sheep-&gt;getHighestRow();    <span class="comment">// 获取该sheet下的行数</span></span><br><span class="line">		$highestColumn = $sheep-&gt;getHighestColumn();    <span class="comment">// 获取该sheet下的列数</span></span><br><span class="line">        <span class="comment">// 跳过表头，从第2行开始获取每一行的数据</span></span><br><span class="line">        <span class="keyword">for</span> ($row = <span class="number">2</span>; $row &lt;= $highestRows; $row++) &#123;</span><br><span class="line">            $rowData = $sheep-&gt;rangeToArray(<span class="string">'A'</span> . $row . <span class="string">':'</span> . $highestColumn . $row, <span class="keyword">NULL</span>, <span class="keyword">TRUE</span>, <span class="keyword">FALSE</span>);    <span class="comment">// 以Array的格式输出数据</span></span><br><span class="line">            <span class="comment">// todo something Like var_dump or insert into table</span></span><br><span class="line">            <span class="comment">// 实际项目我是将数据存入数据库的，这里我就简单的打印出来看看数据获取是否正确</span></span><br><span class="line">            var_dump($rowDate);</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">'&lt;br /&gt;'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 释放内存</span></span><br><span class="line">    $objPHPExcel-&gt;disconnectWorksheets();</span><br><span class="line">	$objPHPExcel-&gt;garbageCollect();</span><br><span class="line">	<span class="keyword">unset</span>($objReader);</span><br><span class="line">	<span class="keyword">unset</span>($objPHPExcel);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于获取多个 excel 表格数据，并且文件位于多目录，因此需要写一个获取某目录下所有 excel 文件路径以及子目录下的所有 excel 文件路径。</p>
+<figure class="highlight php"><figcaption><span>myReadDir.php</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 读取文件夹内的excel文件</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>   $path   string   目录路径 OR 文件路径</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>  NULL</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myReadDir</span><span class="params">($path)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (is_dir($path)) &#123;    <span class="comment">// 如果是目录，读取目录内的信息</span></span><br><span class="line">		$dp = dir($path);</span><br><span class="line">		<span class="keyword">while</span> ($file = $dp -&gt;read()) &#123;</span><br><span class="line">			<span class="keyword">if</span> ($file != <span class="string">'.'</span> &amp;&amp; $file != <span class="string">'..'</span>) &#123;   <span class="comment">// 去掉该目录路径及上一层目录路径</span></span><br><span class="line">				myReadDir($path . <span class="string">'/'</span> . $file);    <span class="comment">// 继续对子目录执行本身方法</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		$dp-&gt;close();    <span class="comment">// 释放资源</span></span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">if</span> (is_file($path)) &#123;</span><br><span class="line">		<span class="comment">// 获取文件后缀名称</span></span><br><span class="line">		$index = strrpos($path, <span class="string">'.'</span>);</span><br><span class="line">		$ext = substr($path, $index+<span class="number">1</span>);</span><br><span class="line">		<span class="keyword">if</span> ($ext == <span class="string">'xls'</span> || $ext == <span class="string">'xlsx'</span>) &#123;    <span class="comment">// 对excel文件执行刚刚的readExcel方法</span></span><br><span class="line">			$rst = readExcel($path);</span><br><span class="line">            <span class="keyword">if</span> (!$rst) &#123;</span><br><span class="line">                <span class="comment">// 对该文件执行readExcel方法出错，做相应的错误记录</span></span><br><span class="line">                <span class="comment">// todo something</span></span><br><span class="line">            &#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>方法都写好以后，接下来只要传进存储 Excel 文件的目录，调用方法就可以达到所需要的目的了。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$filePath = <span class="string">'./public/excel'</span>;</span><br><span class="line">myReadDir($filePath);</span><br></pre></td></tr></table></figure>
+<p>这样我们就可以得到以下的结果：</p>
+<p><img src="http://res.cloudinary.com/n4sb/image/upload/v1519867310/20180301085625.png" alt="打印结果"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>我要请你喝咖啡</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Liam Lin 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Liam Lin
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://n4sb.me/2018/03/06/简谈PHPExcel类上传实例/" title="简述PHPExcel类上传实例">http://n4sb.me/2018/03/06/简谈PHPExcel类上传实例/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/PHPExcel/" rel="tag"># PHPExcel</a>
+          
+            <a href="/tags/PHP/" rel="tag"># PHP</a>
+          
+            <a href="/tags/Excel上传/" rel="tag"># Excel上传</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/16/基于OpenZeppelinn建立标准代币/" rel="next" title="基于OpenZeppelinn建立标准代币">
+                <i class="fa fa-chevron-left"></i> 基于OpenZeppelinn建立标准代币
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Liam Lin" />
+            
+              <p class="site-author-name" itemprop="name">Liam Lin</p>
+              <p class="site-description motion-element" itemprop="description">Be the change you want to see in the world</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/JLiamLin" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:meitiandouaini@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正文"><span class="nav-number">2.</span> <span class="nav-text">正文</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是-PHPExcel"><span class="nav-number">2.1.</span> <span class="nav-text">什么是 PHPExcel</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PHPExcel-使用示例"><span class="nav-number">2.2.</span> <span class="nav-text">PHPExcel 使用示例</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Liam Lin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
